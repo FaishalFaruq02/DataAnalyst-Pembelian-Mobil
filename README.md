@@ -29,83 +29,11 @@ Data mentah (Excel)
    └─ 2. Dashboard          ── Power BI
 ```
 
-### Kamus data
-
-| Kolom | Arti |
-|---|---|
-| `sales_date` | Tanggal transaksi (tersimpan sebagai teks) |
-| `order_id` | ID transaksi (`TRX00001`, dst.) |
-| `customer_name` | Kode pelanggan (`Customer_913`) |
-| `branch` | Cabang / kota showroom |
-| `product_name`, `category`, `color` | Produk, kategori (SUV, MPV, Hatchback, Pickup, City Car EV), dan warna |
-| `price`, `quantity` | Harga per unit dan jumlah unit (1–3) |
-| `payment_type` | Kredit, Cash, Kredit + Trade In, Cash + Trade In |
-| `trade_in`, `discount` | Nilai trade-in dan potongan diskon |
-| `total` | `price × quantity` |
-| `total_sales` | `total − trade_in − discount` |
-| `status` | `completed`, `cancelled`, atau `refund` |
-| `branch_address` | Alamat cabang |
-| `date_clean` | Kolom bantu: `sales_date` yang sudah diubah menjadi tipe tanggal |
-| `trade_in_quantity` | Kolom bantu: 1 jika transaksi memakai trade-in, 0 jika tidak |
-
-### 1. Validasi data (Excel)
-
-| Pemeriksaan | Hasil |
-|---|---|
-| `order_id` duplikat | 0 |
-| Nilai kosong pada kolom data | 0 |
-| `total` = `price × quantity` | Cocok di 100% baris |
-| `total_sales` = `total − trade_in − discount` | Cocok di 100% baris |
-| Satu cabang = satu alamat | Konsisten |
-| Satu produk = satu kategori dan satu harga | Konsisten |
-| Rentang tanggal | 1 Jan – 31 Des 2025, tanpa tanggal yang gagal dibaca |
-
-Satu temuan yang perlu dicatat: **251 transaksi memiliki `total_sales` negatif** (total −Rp8,08 miliar). Semuanya memakai trade-in, dan nilai trade-in-nya lebih besar daripada harga mobil baru. Baris ini tetap dipakai dan dibahas di [Project Insight](#project-insight).
-
-### 2. Transform (Excel)
-
-| Langkah | Contoh rumus |
-|---|---|
-| Ubah `sales_date` dari teks menjadi tanggal (`date_clean`) | `=DATEVALUE(A2)` |
-| Tandai transaksi yang memakai trade-in (`trade_in_quantity`) | `=IF(K2>0,1,0)` |
-| Pivot table untuk angka pembanding: `total_sales` per status, cabang, dan kategori; persentase trade-in per cabang | `Insert` → `PivotTable` |
-
-_Huruf kolom pada rumus hanyalah contoh; sesuaikan dengan sheet Anda._
-
-### 3. Dashboard (Power BI)
-
-Sumber data: `Sheet1` dari file Excel, memakai `date_clean` sebagai sumbu waktu.
-
-Contoh measure DAX untuk empat kartu KPI:
-
-```DAX
-Total Pendapatan = SUM(Sheet1[total_sales])
-
-Transaksi Completed =
-CALCULATE(COUNTROWS(Sheet1), Sheet1[status] = "completed")
-
-Total Transaksi = COUNTROWS(Sheet1)
-
-Persentase = DIVIDE([Transaksi Completed], [Total Transaksi])
-```
-
-| Visual | Field |
-|---|---|
-| 4 kartu KPI | Total Pendapatan, Transaksi Completed, Total Transaksi, Persentase |
-| Tren Penjualan (garis) | Bulan dari `date_clean` × `total_sales` |
-| Total Penjualan per Kategori (bar) | `category` × `total_sales` |
-| Total Penjualan per Kota (kolom) | `branch` × `total_sales` |
-| 5 Produk Tertinggi (kolom) | `product_name` × `total_sales`, filter Top 5 |
-| Status (pie) | `status` × `total_sales` |
-| Type Pembelian (donat) | `payment_type` × `total_sales` |
-| Tabel detail transaksi | `order_id`, kota, produk, kategori, tipe pembayaran, trade-in, diskon, total sales, status |
-| Slicer | Rentang waktu, Kota, Kategori |
-
 ---
 
 ## Dashboard
 
-![Dashboard penjualan showroom mobil](dashboard/screenshot.png)
+<img width="1210" height="687" alt="Screenshot" src="https://github.com/user-attachments/assets/b36f8b42-5d4b-4a4e-ba1d-4043a6ee8b4e" />
 
 _Dashboard Power BI: KPI penjualan dan transaksi, tren bulanan, penjualan per kategori, kota, dan produk, status transaksi, tipe pembelian, dan tabel detail, dengan slicer rentang waktu, kota, dan kategori._
 
@@ -119,9 +47,6 @@ _Dashboard Power BI: KPI penjualan dan transaksi, tren bulanan, penjualan per ka
 | Persentase | Transaksi Completed ÷ Total Transaksi | 89,7% |
 
 > **Catatan:** Total Pendapatan di atas belum memisahkan transaksi yang gagal. Penjualan dari transaksi completed saja adalah **Rp2,77 T**.
-
-- **File Power BI:** [`dashboard/showroom-sales.pbix`](dashboard/showroom-sales.pbix)
-- **Versi online (opsional):** _[tempel link Power BI Service di sini bila sudah dipublikasikan]_
 
 ---
 
@@ -142,26 +67,3 @@ _Dashboard Power BI: KPI penjualan dan transaksi, tren bulanan, penjualan per ka
 - Tinjau kebijakan penilaian trade-in, terutama untuk transaksi yang nilai trade-in-nya melebihi harga mobil baru.
 - Selidiki penyebab cancelled dan refund, karena nilainya mencapai Rp324,5 miliar. Cabang dengan tingkat completed terendah (Jakarta dan Malang, sama-sama 88,7%) bisa menjadi titik awal.
 - Pisahkan pendapatan completed dari total di dashboard agar angka penjualan tidak menyertakan transaksi yang gagal.
-
-### Keterbatasan
-- Data hanya mencakup **satu tahun (2025)**, jadi pola musiman dan pertumbuhan tahunan belum bisa dipastikan.
-- Tidak ada data biaya atau margin, sehingga **keuntungan tidak bisa dihitung**.
-- Tidak ada kolom alasan cancelled atau refund, sehingga penyebabnya tidak bisa dianalisis.
-- `customer_name` berupa kode pelanggan, bukan identitas sebenarnya.
-- Perbedaan antar cabang dan metode pembayaran kecil; baca sebagai kecenderungan, bukan sebab-akibat.
-
----
-
-## Struktur repo
-
-```
-car-showroom-sales-dashboard/
-├── data/
-│   └── showroom_mobil_10cabang_10k.xlsx
-├── dashboard/
-│   ├── showroom-sales.pbix
-│   └── screenshot.png
-└── README.md
-```
-
-**Tools:** Microsoft Excel (validasi, kolom bantu, pivot table) · Power BI (DAX)
