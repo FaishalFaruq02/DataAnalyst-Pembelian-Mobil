@@ -4,6 +4,7 @@ Analisis end to end penjualan 10 cabang showroom mobil sepanjang 2025
 
 **Dataset:** `showroom_mobil_10cabang_10k_data_awal.xlsx`
 [Lihat file mentah](https://github.com/USERNAME/car-showroom-sales-dashboard/blob/main/data/showroom_mobil_10cabang_10k.xlsx) ·
+
 **Isi:** [Pertanyaan](#pertanyaan) · [Proses](#proses) · [Dashboard](#dashboard) · [Project Insight](#project-insight)
 
 ---
