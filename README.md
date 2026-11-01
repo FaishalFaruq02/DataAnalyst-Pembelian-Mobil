@@ -1,12 +1,9 @@
 # Car Showroom Sales Analysis Dashboard
 
-Analisis penjualan 10 cabang showroom mobil sepanjang 2025: validasi dan transformasi data dengan **Excel**, lalu visualisasi interaktif dengan **Power BI**.
+Analisis end to end penjualan 10 cabang showroom mobil sepanjang 2025
 
-**Hasil singkat:** 10.000 transaksi menghasilkan penjualan **Rp3,09 triliun**, dengan **89,7%** transaksi berstatus completed. **SUV dan MPV menyumbang 86,6%** penjualan, sedangkan penjualan antar cabang sangat merata.
-
-**Dataset:** `showroom_mobil_10cabang_10k.xlsx` (Sheet1), 10.000 baris, periode 1 Januari – 31 Desember 2025, 10 cabang, 20 produk, 5 kategori, 3.977 pelanggan unik.
-[Lihat file mentah](https://github.com/USERNAME/car-showroom-sales-dashboard/blob/main/data/showroom_mobil_10cabang_10k.xlsx) · Sumber dan lisensi: _[isi sumber dataset di sini]_
-
+**Dataset:** `showroom_mobil_10cabang_10k_data_awal.xlsx`
+[Lihat file mentah](https://github.com/USERNAME/car-showroom-sales-dashboard/blob/main/data/showroom_mobil_10cabang_10k.xlsx) ·
 **Isi:** [Pertanyaan](#pertanyaan) · [Proses](#proses) · [Dashboard](#dashboard) · [Project Insight](#project-insight)
 
 ---
@@ -28,9 +25,8 @@ Analisis penjualan 10 cabang showroom mobil sepanjang 2025: validasi dan transfo
 ```
 Data mentah (Excel)
    │
-   ├─ 1. Validasi data      ── Excel
-   ├─ 2. Transform          ── Excel (kolom bantu dan pivot table)
-   └─ 3. Dashboard          ── Power BI
+   ├─ 1. Mengolah data      ── Excel, Python, SQL
+   └─ 2. Dashboard          ── Power BI
 ```
 
 ### Kamus data
